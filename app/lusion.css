@@ -11,7 +11,9 @@
     height: 100%;
     color: var(--color-black);
   }
-  
+  a,button {
+    cursor:pointer;
+  }
 hr {
     height: 0;
     color: inherit
@@ -1994,15 +1996,10 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
     position: relative;
     overflow: hidden;
     display: flex!important;
-    height: .8em;
+    height: fit-content;
     will-change: transform
 }
 
-.home-reel-video-title-word .char-wrapper {
-    position: relative;
-    top: -.15em;
-    width: .6em
-}
 
 #home-reel-video-watch-btn-base {
     position: absolute;
@@ -2412,7 +2409,7 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
 #home-featured-cta-text {
     position: relative;
     z-index: 1;
-    transition: color cubic-bezier(.35,0,0,1) .5s,transform cubic-bezier(.35,0,0,1) .4s
+    transition: color cubic-bezier(.35,0,0,1) .5s,transform cubic-bezier(.35,0,0,1) .4s;
 }
 
 #home-featured-cta-arrow {

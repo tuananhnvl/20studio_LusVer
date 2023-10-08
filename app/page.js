@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useReducer } from 'react'
+import { Suspense, useEffect, useReducer,useState } from 'react'
 import Lenis from '@studio-freight/lenis'
 import { Canvas, useThree } from '@react-three/fiber'
-import { Stats, MeshWobbleMaterial } from '@react-three/drei'
+import { Stats, Loader } from '@react-three/drei'
 import BallPhysic from "./components/BallPhysic"
 import { EffectComposer, N8AO } from "@react-three/postprocessing"
 import {
@@ -19,19 +19,22 @@ import ListImgMesh from './components/ListImgMesh'
 import FooterSpace from './components/FooterSpace'
 import { BallLusion } from './components/BallLusion'
 export default function Home() {
-  const [ref, boxPhysic, trackViewFooter, listItem, view4, view5, view6] = useRefs()
+    console.log('Home load')
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [ref, boxPhysic, lenis, listItem, view4, view5, view6] = useRefs(null)
   const listColorBall = ['#4060ff', '#20ffa0', '#ff4060', '#ffcc00']
   const [colorNew, changePropsForCanvas] = useReducer((state) => ++state % listColorBall.length, 0)
 
   useEffect(() => {
-    const lenis = new Lenis()
-    lenis.on('scroll', (e) => {
+    console.log('frist load -- lenis')
+    lenis.current = new Lenis()
+    lenis.current.on('scroll', (e) => {
       // console.log(e.scroll)
-      localStorage.setItem('posCurrent', e.scroll)
+      //localStorage.setItem('posCurrent', e.scroll)
     })
 
     function raf(time) {
-      lenis.raf(time)
+      lenis.current.raf(time)
       requestAnimationFrame(raf)
     }
 
@@ -39,7 +42,20 @@ export default function Home() {
 
   }, [])
 
+  const handleButtonClick = () => {
+    lenis.current.scrollTo('.main')
+  };
 
+
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+
+  useEffect(() => {
+    console.log(ref,document.getElementById('header-right-menu-btn'))
+  },[ref])
   return (
 
     <>
@@ -67,9 +83,7 @@ export default function Home() {
                         </button>
                     </div>
                     <div id="header-right">
-                        <button id="header-right-sound-btn" style={{ transform: 'translate3d(0px, 0em, 0px)' }}>
-                           
-                        </button>
+                        <button id="header-right-sound-btn" style={{ transform: 'translate3d(0px, 0em, 0px)' }}></button>
                         <button id="header-right-talk-btn-placeholder"></button>
                         <button id="header-right-talk-btn" style={{ display: 'block', pointerEvents: 'auto', opacity: 1, transform: 'translate3d(0px, 0em, 0px)' }}>
                             <a href="mailto:vphcm@20stu.co"></a>
@@ -100,7 +114,7 @@ export default function Home() {
                                     </svg>
                                 </div>
                             </a>
-                            <a className="header-menu-link" data-page="about" href="/about">
+                            <a className="header-menu-link" data-page="about" href="/aboutus">
                                 <div className="header-menu-link-background"></div>
                                 <div className="header-menu-link-inner">
                                     <span className="header-menu-link-text">About us</span><span className="header-menu-link-text-clone">About us</span>
@@ -109,7 +123,7 @@ export default function Home() {
                                     </svg>
                                 </div>
                             </a>
-                            <a className="header-menu-link" data-page="projects" href="/projects">
+                          {/*   <a className="header-menu-link" data-page="projects" href="/projects">
                                 <div className="header-menu-link-background"></div>
                                 <div className="header-menu-link-inner">
                                     <span className="header-menu-link-text">Projects</span><span className="header-menu-link-text-clone">Projects</span>
@@ -117,7 +131,7 @@ export default function Home() {
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.515 12h16.97m0 0L13.01 4.525M20.485 12l-7.475 7.476"></path>
                                     </svg>
                                 </div>
-                            </a>
+                            </a> */}
                             <button className="header-menu-link" data-scroll-to="contact">
                                 <div className="header-menu-link-background"></div>
                                 <div className="header-menu-link-inner">
@@ -165,8 +179,8 @@ export default function Home() {
                                     </svg>
                                 </div>
                                 <div id="header-menu-labs-texts">
-                                    <div id="header-menu-labs-text">Labs</div>
-                                    <div id="header-menu-labs-text-clone">Labs</div>
+                                    <div id="header-menu-labs-text">Gallery</div>
+                                    <div id="header-menu-labs-text-clone">Gallery</div>
                                 </div>
                                 <svg id="header-menu-labs-arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 20 20 4m0 0v14.096M20 4H5.904"></path>
@@ -209,7 +223,7 @@ export default function Home() {
                                 <div id="home-reel-desc" style={{ transform: 'translate3d(0px, -48px, 0px)' }}>
                                     Được dịch từ tiếng Anh-Trong xuất bản và thiết kế đồ họa, Lorem ipsum là một văn bản giữ chỗ thường được sử dụng để thể hiện hình thức trực quan của tài liệu hoặc kiểu chữ mà không dựa vào nội dung có ý nghĩa. Lorem ipsum có thể được sử dụng làm trình giữ chỗ trước khi có bản sao cuối cùng.
                                 </div>
-                                <a id="home-reel-cta" href="/about" target="_blank" style={{ transform: 'translateY(-20.9px) translate3d(0px, 0%, 0px) rotate(0deg)', opacity: 1 }}>
+                                <a id="home-reel-cta" href="/aboutus" style={{ transform: 'translateY(-20.9px) translate3d(0px, 0%, 0px) rotate(0deg)', opacity: 1 }}>
                                     <span id="home-reel-cta-dot"></span><span id="home-reel-cta-text">About us</span>
                                     <span id="home-reel-cta-arrow">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
@@ -303,41 +317,11 @@ export default function Home() {
                                         </div>
                                         <div id="home-reel-video-placeholder">
                                             <div id="home-reel-video-title">
-                                                <div className="home-reel-video-title-word" style={{ display: 'inline-block' }}>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>P</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>P</div>
-                                                    </div>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>l</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>l</div>
-                                                    </div>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>a</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>a</div>
-                                                    </div>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>y</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>y</div>
-                                                    </div>
+                                                <div className="home-reel-video-title-word">
+                                                  PLAY
                                                 </div>
-                                                <div className="home-reel-video-title-word" style={{ display: 'inline-block' }}>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>R</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>R</div>
-                                                    </div>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>e</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>e</div>
-                                                    </div>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>e</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>e</div>
-                                                    </div>
-                                                    <div className="char-wrapper" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>
-                                                        <div className="char" style={{ display: 'inline-block', transform: 'translate3d(0px, 0px, 0px)' }}>l</div>
-                                                        <div className="char" style={{ display: 'inline-block' }}>l</div>
-                                                    </div>
+                                                <div className="home-reel-video-title-word">
+                                                  REEL
                                                 </div>
                                             </div>
                                         </div>
@@ -381,28 +365,7 @@ export default function Home() {
                                         <div className="project-item-line-2">
                                             <div className="project-item-line-2-icon"></div>
                                             <div className="project-item-line-2-inner">
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>P</span><span>P</span><span>P</span><span>P</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>o</span><span>o</span><span>o</span><span>o</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>s</span><span>s</span><span>s</span><span>s</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>:</span><span>:</span><span>:</span><span>:</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>D</span><span>D</span><span>D</span><span>D</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>m</span><span>m</span><span>m</span><span>m</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>M</span><span>M</span><span>M</span><span>M</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>i</span><span>i</span><span>i</span><span>i</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>n</span><span>n</span><span>n</span><span>n</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
+                                               Poscher: Dream Machine
                                             </div>
 
                                         </div>
@@ -417,28 +380,7 @@ export default function Home() {
                                         <div className="project-item-line-2">
                                             <div className="project-item-line-2-icon"></div>
                                             <div className="project-item-line-2-inner">
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>P</span><span>P</span><span>P</span><span>P</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>o</span><span>o</span><span>o</span><span>o</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>s</span><span>s</span><span>s</span><span>s</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>:</span><span>:</span><span>:</span><span>:</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>D</span><span>D</span><span>D</span><span>D</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>m</span><span>m</span><span>m</span><span>m</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>M</span><span>M</span><span>M</span><span>M</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>i</span><span>i</span><span>i</span><span>i</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>n</span><span>n</span><span>n</span><span>n</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
+                                            Poscher: Dream Machine
                                             </div>
 
                                         </div>
@@ -453,28 +395,7 @@ export default function Home() {
                                         <div className="project-item-line-2">
                                             <div className="project-item-line-2-icon"></div>
                                             <div className="project-item-line-2-inner">
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>P</span><span>P</span><span>P</span><span>P</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>o</span><span>o</span><span>o</span><span>o</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>s</span><span>s</span><span>s</span><span>s</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>:</span><span>:</span><span>:</span><span>:</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>D</span><span>D</span><span>D</span><span>D</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>m</span><span>m</span><span>m</span><span>m</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>M</span><span>M</span><span>M</span><span>M</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>i</span><span>i</span><span>i</span><span>i</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>n</span><span>n</span><span>n</span><span>n</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
+                                            Poscher: Dream Machine
                                             </div>
 
                                         </div>
@@ -489,28 +410,7 @@ export default function Home() {
                                         <div className="project-item-line-2">
                                             <div className="project-item-line-2-icon"></div>
                                             <div className="project-item-line-2-inner">
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>P</span><span>P</span><span>P</span><span>P</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>o</span><span>o</span><span>o</span><span>o</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>s</span><span>s</span><span>s</span><span>s</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>:</span><span>:</span><span>:</span><span>:</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>D</span><span>D</span><span>D</span><span>D</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>m</span><span>m</span><span>m</span><span>m</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>M</span><span>M</span><span>M</span><span>M</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>i</span><span>i</span><span>i</span><span>i</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>n</span><span>n</span><span>n</span><span>n</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
+                                            Poscher: Dream Machine
                                             </div>
 
                                         </div>
@@ -525,28 +425,7 @@ export default function Home() {
                                         <div className="project-item-line-2">
                                             <div className="project-item-line-2-icon"></div>
                                             <div className="project-item-line-2-inner">
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>P</span><span>P</span><span>P</span><span>P</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>o</span><span>o</span><span>o</span><span>o</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>s</span><span>s</span><span>s</span><span>s</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>:</span><span>:</span><span>:</span><span>:</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>D</span><span>D</span><span>D</span><span>D</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>m</span><span>m</span><span>m</span><span>m</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>M</span><span>M</span><span>M</span><span>M</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>i</span><span>i</span><span>i</span><span>i</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>n</span><span>n</span><span>n</span><span>n</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
+                                            Poscher: Dream Machine
                                             </div>
 
                                         </div>
@@ -561,35 +440,13 @@ export default function Home() {
                                         <div className="project-item-line-2">
                                             <div className="project-item-line-2-icon"></div>
                                             <div className="project-item-line-2-inner">
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>P</span><span>P</span><span>P</span><span>P</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>o</span><span>o</span><span>o</span><span>o</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>s</span><span>s</span><span>s</span><span>s</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>:</span><span>:</span><span>:</span><span>:</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>D</span><span>D</span><span>D</span><span>D</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>r</span><span>r</span><span>r</span><span>r</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>m</span><span>m</span><span>m</span><span>m</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)', width: '0.3em' }}></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>M</span><span>M</span><span>M</span><span>M</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>a</span><span>a</span><span>a</span><span>a</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>c</span><span>c</span><span>c</span><span>c</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>h</span><span>h</span><span>h</span><span>h</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>i</span><span>i</span><span>i</span><span>i</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>n</span><span>n</span><span>n</span><span>n</span></div>
-                                                <div className="project-item-line-2-inner-list" style={{ display: 'flex', flexDirection: 'column', transform: 'translateY(0%)' }}><span>e</span><span>e</span><span>e</span><span>e</span></div>
+                                            Poscher: Dream Machine
                                             </div>
-
                                         </div>
                                     </div>
                                 </a>
                             </div>
-                            <a id="home-featured-cta" target="_blank">
+                            <a id="home-featured-cta"  href='/gallery'>
                                 <span id="home-featured-cta-dot"></span><span id="home-featured-cta-text">See all projects</span>
                                 <span id="home-featured-cta-arrow">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
@@ -642,9 +499,8 @@ export default function Home() {
                                                 <path fill="#000" fillRule="evenodd" d="M6.948 18.113a.75.75 0 0 1-1.06-1.06l9.885-9.886H8.65a.75.75 0 1 1 0-1.5h9.682v9.682a.75.75 0 0 1-1.5 0v-7.12l-9.884 9.884Z" clipRule="evenodd"></path>
                                             </svg>
                                             <span className="footer-socials-text" style={{ display: 'inline-block', position: 'relative' }}>
-                                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>Twitter</div>
-                                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>/</div>
-                                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>X</div>
+                                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>Twitter/X</div>
+                                          
                                             </span>
                                         </a>
                                     </div>
@@ -700,14 +556,12 @@ export default function Home() {
                                 <div id="footer-newsletter-header">
                                     <div className="footer-newsletter-line-wrapper" style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                                         <span className="footer-newsletter-line">
-                                            <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>Subscribe</div>
-                                            <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>to</div>
+                                            <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>Subscribe to</div>
                                         </span>
                                     </div>
                                     <div className="footer-newsletter-line-wrapper" style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                                         <span className="footer-newsletter-line">
-                                            <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>our</div>
-                                            <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>newsletter</div>
+                                            <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0em, 0px)' }}>our newsletter</div>
                                         </span>
                                     </div>
                                 </div>
@@ -727,23 +581,15 @@ export default function Home() {
                         </div>
                         <div id="footer-bottom">
                             <div id="footer-bottom-copyright">
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>©2023</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>LUSION</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>Creative</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>Studio</div>
+                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>20 Creative Studio ©2023</div>
                             </div>
                             <a id="footer-bottom-labs" href="https://labs.lusion.co" target="_blank">
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>R&amp;D:</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>labs.lusion.co</div>
+                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>R&amp;D: labs.tadstu.co</div>
                             </a>
                             <div id="footer-bottom-tagline">
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>Built</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>by</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>Lusion</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 1.04756%, 0px)' }}>with</div>
-                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 4.87547%, 0px)' }}>❤️</div>
+                                <div className="word" style={{ display: 'inline-block', transform: 'translate3d(0px, 0%, 0px)' }}>Built by TAD with ❤️</div>
                             </div>
-                            <div id="footer-bottom-up" style={{ transform: 'scale(1)' }}>
+                            <div id="footer-bottom-up" style={{ transform: 'scale(1)' }} onClick={handleButtonClick}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" style={{ display: 'inline-block', position: 'relative' }}>
                                     <path fill="#fff" fillRule="evenodd" d="M12 22a1 1 0 0 1-1-1V5.857l-6.223 6.224a1 1 0 0 1-1.415-1.415l7.9-7.9a1 1 0 0 1 1.414 0v.001l7.9 7.9a1 1 0 0 1-1.414 1.414L13 5.919V21a1 1 0 0 1-1 1Z" clipRule="evenodd"></path>
                                 </svg>
@@ -762,6 +608,7 @@ export default function Home() {
 
 
 
+      <Suspense fallback={<LoaderCustom/>}>
       <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }}  >
         <Stats />
         <View track={boxPhysic}>
@@ -772,13 +619,19 @@ export default function Home() {
           <ListImgMesh position={[0, 0, 0]} />
         </View>
    
-        <EffNEnvBallLusion />
+        {/* <EffNEnvBallLusion /> */}
         <Preload all />
       </Canvas>  
+      </Suspense>
+      {/* <Loader/> */}
     </>
   )
 }
-
+const LoaderCustom = () => {
+    return (
+        <h1>Loading.............</h1>
+    )
+}
 
 const EffNEnvBallLusion = () => {
   <>

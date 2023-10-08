@@ -5,6 +5,7 @@
     margin: 0;
     padding:0 ;
     overflow: hidden;
+    background-color: var(--bg-color);
   }
   .main {
     width: 100%;
@@ -126,6 +127,7 @@ a,a:active,a:hover,a:visited {
 }
 
 :root {
+    --bg-color:#ebedeb;
     --vh:7.15px;
     --color-error: #e90000;
     --color-off-white: #f0f1fa;
@@ -385,14 +387,6 @@ html,body,h1,h2,h3,h4,button,input {
     z-index: 999!important
 }
 
-html,body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    background-color: var(--color-white);
-    color: var(--color-off-white);
-    overflow: hidden
-}
 
 @media (min-aspect-ratio: 21/9) {
     html,body {
@@ -576,11 +570,11 @@ html.is-black-bg #header,html.is-blue-bg #header {
     position: absolute;
     top: 0;
     right: 0;
-    height: calc(var(--vh, 1vh) * 100);
+    height: 100vh;
     width: 50vw;
     background: linear-gradient(270deg,rgba(11,11,18,.5) 0%,rgba(11,11,18,0) 100%);
     opacity: 0;
-    transition: .4s .4s opacity;
+    transition: .2s opacity;
     pointer-events: none
 }
 
@@ -592,8 +586,9 @@ html.is-black-bg #header,html.is-blue-bg #header {
 }
 
 #header-background.--opened {
-    transition: .4s opacity;
-    pointer-events: auto
+    transition: .2s opacity;
+    pointer-events: auto;
+    opacity: 1;
 }
 
 #header-logo {
@@ -1453,7 +1448,7 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
     height: .8em;
     top: .1em;
     left: -1em;
-   /*  background-image: url(/assets/images/icons/arrow-right.svg); */
+    background-image: url(http://localhost:3000/arrow-right.svg);
     background-repeat: no-repeat;
     background-size: contain
 }
@@ -2026,7 +2021,9 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
     top: 0;
     width: 100%;
     height: 100%;
-    pointer-events: auto
+    pointer-events: auto;
+    background: #fafac2;
+    border-radius: 20px;
 }
 
 #home-reel-video {

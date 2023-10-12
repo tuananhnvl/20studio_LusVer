@@ -3,7 +3,7 @@
 import * as THREE from 'three'
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF, MeshTransmissionMaterial } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import { CuboidCollider, BallCollider, Physics, RigidBody } from '@react-three/rapier'
 import { easing } from 'maath'
 
@@ -30,7 +30,7 @@ export const BallLusion = ({accent}) => {
         <Physics /* debug */ gravity={[0, 0, 0]}>
             <Pointer />
             {connectors.map((props, i) => <Connector key={i} {...props} />) /* prettier-ignore */}
-            <Connector position={[10, 10, 5]}>
+           {/*  <Connector position={[10, 10, 5]}>
                 <Model>
                     <MeshTransmissionMaterial clearcoat={1} thickness={0.1} anisotropicBlur={0.1} chromaticAberration={0.1} samples={8} resolution={512} />
                 </Model>
@@ -39,7 +39,7 @@ export const BallLusion = ({accent}) => {
                 <Model>
                     <MeshTransmissionMaterial clearcoat={1} thickness={0.1} anisotropicBlur={0.1} chromaticAberration={0.1} samples={8} resolution={512} />
                 </Model>
-            </Connector>
+            </Connector> */}
         </Physics>
        </>
     )
@@ -48,6 +48,7 @@ function Connector({ position, children, vec = new THREE.Vector3(), scale, r = T
     const api = useRef()
     const pos = useMemo(() => position || [r(2), r(2), r(2)], [])
     useFrame((state, delta) => {
+      //  console.log(localStorage.getItem('posCurrent'))
         delta = Math.min(0.1, delta)
         api.current?.applyImpulse(vec.copy(api.current.translation()).negate().multiplyScalar(1.))
     })
@@ -79,7 +80,7 @@ function Model({ children, color = 'white', roughness = 0, ...props }) {
     const { nodes, materials } = useGLTF('/c-transformed.glb')
 
     useFrame((state, delta) => {
-        easing.dampC(ref.current.material.color, color, 0.2, delta)
+        easing.dampC(ref.current.material.color, color, 0.5, delta)
     })
     return (
         <mesh ref={ref} castShadow receiveShadow scale={10} geometry={nodes.connector.geometry}>

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useReducer,useState } from 'react'
 import Lenis from '@studio-freight/lenis'
 import { Canvas, useThree } from '@react-three/fiber'
-import { Stats, Loader } from '@react-three/drei'
+import { Stats,useProgress,Html } from '@react-three/drei'
 import BallPhysic from "./components/BallPhysic"
 import { EffectComposer, N8AO } from "@react-three/postprocessing"
 import {
@@ -16,12 +16,14 @@ import {
 } from '@react-three/drei'
 import useRefs from 'react-use-refs'
 import ListImgMesh from './components/ListImgMesh'
+import SpaceShader from './components/SpaceShader'
 import Navbar from './components/Navbar'
 import { BallLusion } from './components/BallLusion'
+import EffSimuControls from './fuild2/EffSimuControls'
 export default function Home() {
     console.log('Home load')
   
-  const [ref, boxPhysic, lenis, listItem, view4, view5, view6] = useRefs(null)
+  const [ref, boxPhysic, lenis, spaceShader, fixedView, view5, view6] = useRefs(null)
   const listColorBall = ['#4060ff', '#20ffa0', '#ff4060', '#ffcc00']
   const [colorNew, changePropsForCanvas] = useReducer((state) => ++state % listColorBall.length, 0)
 
@@ -29,8 +31,8 @@ export default function Home() {
     console.log('frist load -- lenis')
     lenis.current = new Lenis()
     lenis.current.on('scroll', (e) => {
-      // console.log(e.scroll)
-      //localStorage.setItem('posCurrent', e.scroll)
+
+      localStorage.setItem('posCurrent', e.scroll)
     })
 
     function raf(time) {
@@ -52,12 +54,15 @@ export default function Home() {
     <>
       <main ref={ref} className="main">
             <Navbar/>
+            <div style={{width:'100vw',height:'100vh',position:'fixed'}} ref={fixedView}>
+
+            </div>
             <div id="page-container" >
                 <div id="page-container-inner">
                     <div id="home" className="page">
                         <div id="home-hero" className="section">
                             <div id="home-hero-title">
-                                Lý thuyết dây là một thuyết hấp dẫn lượng tử, được xây dựng với mục đích thống nhất tất cả các hạt cơ bản cùng các lực cơ bản của tự nhiên, ngay cả lực hấp dẫn.
+                            Chúng tôi cung cấp dịch vụ thiết kế và sản xuất thời trang cao cấp.
                             </div>
                             <div id="home-hero-visual-container" ref={boxPhysic} onClick={changePropsForCanvas}></div>
                             <div id="home-hero-scroll-container">
@@ -75,12 +80,12 @@ export default function Home() {
                         <div id="home-reel" className="section">
                             <h4 id="home-reel-title">
                                 <div id="home-reel-title-inner" style={{ transform: 'translate3d(0px, -21.91px, 0px)' }}>
-                                    Beyond Visions Cloth
+                                Phát triển và Sáng tạo ra nhựng sản phẩm độc nhất.
                                 </div>
                             </h4>
                             <div id="home-reel-content">
                                 <div id="home-reel-desc" style={{ transform: 'translate3d(0px, -48px, 0px)' }}>
-                                    Được dịch từ tiếng Anh-Trong xuất bản và thiết kế đồ họa, Lorem ipsum là một văn bản giữ chỗ thường được sử dụng để thể hiện hình thức trực quan của tài liệu hoặc kiểu chữ mà không dựa vào nội dung có ý nghĩa. Lorem ipsum có thể được sử dụng làm trình giữ chỗ trước khi có bản sao cuối cùng.
+                                20STUDIO LÀ CÔNG TY CHUYÊN VỀ THIẾT KẾ, TẠO RA NHỮNG SẢN PHẨM MANG TÍNH SÁNG TẠO, ĐỘC NHẤT, “ĐẶC BIỆT”. CHÚNG TÔI GIÚP KHÁCH HÀNG TRUYỀN TẢI ĐƯỢC PHONG CÁCH VÀ CÂU CHUYỆN QUA SẢN PHẨM CỦA HỌ. VỚI ĐỘI NGŨ TRẺ VÀ TÀI NĂNG, CHÚNG TÔI GIÚP KHÁCH HÀNG LOẠI BỎ NHỮNG GIỚI HẠN BẰNG KHẢ NĂNG THIẾT KẾ, GIẢI QUYẾT VẤN ĐỀ NHẰM TẠO RA MỘT SẢN PHẨM THỜI TRANG ĐỈNH NHẤT
                                 </div>
                                 <a id="home-reel-cta" href="/aboutus" style={{ transform: 'translateY(-20.9px) translate3d(0px, 0%, 0px) rotate(0deg)', opacity: 1 }}>
                                     <span id="home-reel-cta-dot"></span><span id="home-reel-cta-text">About us</span>
@@ -92,7 +97,7 @@ export default function Home() {
                                 </a>
                             </div>
                             <div id="home-reel-thumb-wrapper">
-                                <div id="home-reel-thumb">
+                                <div id="home-reel-thumb" >
                                 </div>
                             </div>
                             <div id="home-reel-container">
@@ -194,6 +199,9 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div style={{width:'100vw',height:'100vh',display:'block',position:'relative'}} ref={spaceShader}>
+
                         </div>
                         <div id="home-featured" className="section">
                             <div id="home-featured-title-top">
@@ -461,29 +469,33 @@ export default function Home() {
 
 
 
-      <Suspense fallback={<LoaderCustom/>}>
-      <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }}  >
+   
+      <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }} performance={{ min: 0.1,max:0.2 }}>
         <Stats />
+    
+        <Suspense fallback={ <Loader/>}>
         <View track={boxPhysic}>
           <BallLusion accent={colorNew}/>
           <PerspectiveCamera makeDefault fov={36} position={[0, 0, 8]} />
         </View>
-        <View track={listItem}>
-          <ListImgMesh position={[0, 0, 0]} />
+        <View track={fixedView}>
+         <EffSimuControls/>
         </View>
-   
+        <View track={spaceShader}>
+            <SpaceShader/>
+        </View>
         {/* <EffNEnvBallLusion /> */}
         <Preload all />
+        </Suspense>
       </Canvas>  
-      </Suspense>
-      {/* <Loader/> */}
+  
+      
     </>
   )
 }
-const LoaderCustom = () => {
-    return (
-        <h1>Loading.............</h1>
-    )
+function Loader() {
+    const { active, progress, errors, item, loaded, total } = useProgress()
+    return <Html center>{progress} % loaded</Html>
 }
 
 const EffNEnvBallLusion = () => {

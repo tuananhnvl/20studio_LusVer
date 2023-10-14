@@ -409,6 +409,17 @@ col = col * r * 1.5;
  //col += 0.15 * length(uvOrig);
 
     gl_FragColor = vec4(vec3(col), 1.);
+  
 }
 `
-export default spaceFragmentOld;
+
+const spaceFragment3  =  ` 
+    void main() {
+         
+        gl_FragColor = vec4(1.,.6,.7,1.);
+    }
+
+
+ 
+`
+export default spaceFragment;

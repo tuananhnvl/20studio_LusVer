@@ -13,7 +13,7 @@ void main(){
 
     if(isBFECC == false){
         vec2 vel = texture2D(velocity, uv).xy;
-        vec2 uv2 = uv - vel * dt * ratio;
+        vec2 uv2 = uv    -   vel * dt * ratio; //doidau
         vec2 newVel = texture2D(velocity, uv2).xy;
         gl_FragColor = vec4(newVel, 0.0, 0.0);
     } else {
@@ -43,28 +43,37 @@ void main(){
 
 export const COLOR_FRAG = `
     precision highp float;
-    uniform sampler2D velocity;
+    uniform sampler2D vel_1;
+    uniform sampler2D pressure_1;
+    uniform sampler2D vel_0;
+    uniform sampler2D pressure_0;
     varying vec2 uv;
 
     void main(){
-        vec2 vel = texture2D(velocity, uv).xy;
-        float len = length(vel);
-        vel = vel * 0.5 + 0.5;
+         vec2 vel = texture2D(pressure_1, uv).xy;
+         float len = length(vel);
+          vel = vel * 0.5 + 0.5;
         
-        vec3 color = vec3(vel.x, vel.y, 1.0);
-        color = mix(vec3(0.), color, len);
-        float alpha = .1;
-        vec4 finalColor = vec4(color,0.1);
-        if(color.x > .4 || color.y > .1) {
-            color = vec3(0.);
-        }else{
-          finalColor = vec4(color,.05);
-        }
-        gl_FragColor = finalColor;
+         vec3 color = vec3(vel.x, vel.y, 1.0);
+          color = mix(vec3(0.), color, len);
+        
+       gl_FragColor = vec4(color,1.);
+        
+      
+       
     }
 
 `
+/*    wihout fbo
+  vec3 t = texture2D(pressure_1, uv).rgb;   
+        vec3 r  =  t;
+        float a = (r.x - .1);
+        if(r.r < 0.1 && r.b < 0.1) {
+            r=vec3(1.,1.,1.);
+        } 
+        gl_FragColor = vec4(  r ,a * .1);
 
+*/
 export const DIVERGENCE_FRAG = `
 precision highp float;
 uniform sampler2D velocity;
@@ -77,7 +86,7 @@ void main(){
     float x1 = texture2D(velocity, uv+vec2(px.x, 0)).x;
     float y0 = texture2D(velocity, uv-vec2(0, px.y)).y;
     float y1 = texture2D(velocity, uv+vec2(0, px.y)).y;
-    float divergence = (x1-x0 + y1-y0) / 2.0;
+    float divergence = (x1-x0 + y1-y0) / 4.0;
 
     gl_FragColor = vec4(divergence / dt);
 }
@@ -158,16 +167,17 @@ uniform sampler2D pressure;
 uniform sampler2D divergence;
 uniform vec2 px;
 varying vec2 uv;
-
+float maybeSize =  2.;
 void main(){    
     // poisson equation
-    float p0 = texture2D(pressure, uv+vec2(px.x * 2.0,  0)).r;
-    float p1 = texture2D(pressure, uv-vec2(px.x * 2.0, 0)).r;
-    float p2 = texture2D(pressure, uv+vec2(0, px.y * 2.0 )).r;
-    float p3 = texture2D(pressure, uv-vec2(0, px.y * 2.0 )).r;
+  
+    float p0 = texture2D(pressure, uv+vec2(px.x * maybeSize,  0)).r;
+    float p1 = texture2D(pressure, uv-vec2(px.x * maybeSize, 0)).r;
+    float p2 = texture2D(pressure, uv+vec2(0, px.y * maybeSize )).r;
+    float p3 = texture2D(pressure, uv-vec2(0, px.y * maybeSize )).r;
     float div = texture2D(divergence, uv).r;
     
-    float newP = (p0 + p1 + p2 + p3) / 4.0 - div;
+    float newP = (p0   -  p1 + p2 + p3) / 3.0  -   div;
     gl_FragColor = vec4(newP);
 }
 `
@@ -180,7 +190,7 @@ uniform float dt;
 varying vec2 uv;
 
 void main(){
-    float step = 1.0;
+    float step =  1.;
 
     float p0 = texture2D(pressure, uv+vec2(px.x * step, 0)).r;
     float p1 = texture2D(pressure, uv-vec2(px.x * step, 0)).r;
@@ -189,7 +199,8 @@ void main(){
 
     vec2 v = texture2D(velocity, uv).xy;
     vec2 gradP = vec2(p0 - p1, p2 - p3) * 0.5;
-    v = v - gradP * dt;
+    v = v - gradP * (dt);
+        
     gl_FragColor = vec4(v, 0.0, 1.0);
 }
 `

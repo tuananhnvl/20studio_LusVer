@@ -1,66 +1,76 @@
 "use client"
 
 import { useRef, useEffect } from 'react';
-import { useFrame, Canvas, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import Simulation from './modules/Simulation'
 import Common from './modules/Common'
 import Mouse from './modules/Mouse'
-import Output from "./modules/Output.js";
 
 import { FACE_VERT,COLOR_FRAG } from './modules/glsl/ShaderAll';
-import * as THREE from 'three'
+import {AdditiveBlending,Mesh,PlaneGeometry,BoxGeometry,RawShaderMaterial,Vector2,Group,MeshBasicMaterial} from 'three'
+
 
 export default function  EffSimuControls() {
-    const { gl } = useThree()
+    const { gl,scene } = useThree()
     const simulationCurrent = useRef(null)
-    const outputCurrent = useRef(null)
-    const matRef = useRef(null)
-    const status = useRef(false)
- 
+
+    console.log(gl,scene)
     useEffect(() => {
-      const simulation = new Simulation();
+        const simulation = new Simulation();
         simulationCurrent.current = simulation
         Common.init(gl);
         Mouse.init()
         simulation.init();
-        console.log(simulation)
+      
 
 
-        matRef.current = new THREE.RawShaderMaterial({
+        const geo = new PlaneGeometry(2,2)
+        const mat = new RawShaderMaterial({
             vertexShader: FACE_VERT,
             fragmentShader: COLOR_FRAG,
             uniforms: {
-
-                velocity: {
+          
+                vel_1: {
+                    value: simulation.fbos.vel_1.texture
+                },
+                vel_0: {
                     value: simulation.fbos.vel_0.texture
                 },
-                something: {
+                pressure_0 :{
+                    value: simulation.fbos.pressure_0.texture
+                },
+                pressure_1: {
                     value: simulation.fbos.pressure_1.texture
                 },
                 boundarySpace: {
-                    value: new THREE.Vector2()
+                    value: new Vector2()
                 }
             },
             wireframe: false,
-            transparent: true,
+            transparent:true,
             depthTest:true
         })
-
-        status.current = true
+        const mesh = new Mesh(geo,mat)
+      
+        let sd  =  new Mesh(new BoxGeometry(1,1,1),new MeshBasicMaterial({color:'blue'}))
+        sd.position.set(0,0,2) 
+        const group = new Group()
+        group.name = 'Simulation'
+        group.add(mesh,sd)
+        scene.add(group) 
+      
+       
+      // /  scene.add(aa)
+        
     }, [])
     useFrame(() => {
-    
-        if (status.current) {
+  
+        if (simulationCurrent.current) {
+          //  console.log(simulationCurrent.current.fbos.vel_1.texture)
           Mouse.update()
           simulationCurrent.current.update();
-      
         }
     });
 
-    return   <group position={[0, 0, 0]}>
-    <mesh material={matRef.current}>
-        <planeGeometry args={[2, 2]} />
-       
-    </mesh>
-</group>
+    return (null)
 }

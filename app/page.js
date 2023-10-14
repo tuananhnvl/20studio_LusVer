@@ -1,11 +1,13 @@
 "use client"
-
-import { Suspense, useEffect, useReducer,useState } from 'react'
+import * as THREE from 'three'
+import { Suspense, useEffect, useReducer,useRef,useMemo } from 'react'
 import Lenis from '@studio-freight/lenis'
-import { Canvas, useThree } from '@react-three/fiber'
-import { Stats,useProgress,Html } from '@react-three/drei'
-import BallPhysic from "./components/BallPhysic"
-import { EffectComposer, N8AO } from "@react-three/postprocessing"
+
+
+import { Canvas, useFrame,extend ,createPortal, useThree } from '@react-three/fiber'
+import { Stats,useProgress,Html,shaderMaterial,useFBO,useTexture } from '@react-three/drei'
+
+import {Bloom, EffectComposer, DepthOfField, Noise, Vignette } from "@react-three/postprocessing"
 import {
   View,
   Preload,
@@ -15,11 +17,168 @@ import {
   Environment
 } from '@react-three/drei'
 import useRefs from 'react-use-refs'
-import ListImgMesh from './components/ListImgMesh'
+import { Perf } from 'r3f-perf'
 import SpaceShader from './components/SpaceShader'
 import Navbar from './components/Navbar'
 import { BallLusion } from './components/BallLusion'
 import EffSimuControls from './fuild2/EffSimuControls'
+import BoxGeomestry from './components/BoxGeomestry'
+import SpaceWelcome from './components/SpaceWelcome'
+
+
+
+
+
+
+
+
+  const WaveShaderMaterial = shaderMaterial(
+    { uTime: 0, uTexture: null,uTextureNoiseDis:null},
+    `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    `
+      precision mediump float;
+      uniform float uTime;
+      uniform sampler2D uTexture;
+      uniform sampler2D uTextureNoiseDis;
+      uniform vec3 uColor;
+  
+      varying vec2 vUv;
+  
+      float rand(float n){return fract(sin(n) * 43758.5453123);}
+
+    float noise(float p){
+        float fl = floor(p);
+    float fc = fract(p);
+        return mix(rand(fl), rand(fl + 1.0), fc);
+    }
+
+  
+    
+
+      void main() {
+        vec3 t = texture2D(uTexture, vUv).rgb;   
+        vec3 r  =  t;
+   
+        float a = (r.x - .1);
+
+        if(r.r < 0.1 && r.b < 0.1) {
+            r=vec3(0.,0.,0.);
+        } 
+      
+        gl_FragColor = vec4(  r ,a * .1);
+   
+        
+      }
+    `
+  )
+  const WaveShaderMaterial22222 = shaderMaterial(
+    { uTime: 0, uTexture: null,uTextureNoiseDis:null},
+    `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    `
+      precision mediump float;
+      uniform float uTime;
+      uniform sampler2D uTexture;
+      uniform sampler2D uTextureNoiseDis;
+      uniform vec3 uColor;
+  
+      varying vec2 vUv;
+
+      void main() {
+        vec3 t = texture2D(uTexture, vUv).rgb;   
+        gl_FragColor = vec4(t,1.);
+        
+      }
+    `
+  )
+  extend({ WaveShaderMaterial })
+  extend({ WaveShaderMaterial22222 })
+  const FBOScene = ({ props }) => {
+    const {viewport} = useThree()
+    const target = useFBO(props)
+    const target1 = useFBO(props)
+    const cam = useRef()
+    const shader = useRef()
+    const shader1 = useRef()
+    const scene = useMemo(() => {
+      const scene = new THREE.Scene()
+      return scene
+    }, [])
+    const scene1 = useMemo(() => {
+        const scene1 = new THREE.Scene()
+        return scene1
+      }, [])
+    const texture = useTexture('noise-dis1.png')
+      
+    useFrame((state) => {
+     
+     
+      state.gl.setRenderTarget(target)
+      state.gl.render(scene, cam.current)
+      state.gl.setRenderTarget(null)
+
+   
+    })
+  
+  
+    useEffect(() => {
+        shader.current.transparent = true
+        
+       
+    },[shader,texture])
+    useFrame(({ clock }) => {
+        shader.current.uTime = clock.getElapsedTime()
+        shader1.current.uTime = clock.getElapsedTime()
+    })
+    return (    
+      <>
+        <PerspectiveCamera ref={cam} position={[0, 0, 0]} />
+   
+        {createPortal(  <EffSimuControls/>  ,scene)}
+        <group>
+            <mesh>
+                <planeBufferGeometry args={[viewport.width,viewport.height]} />
+                <waveShaderMaterial ref={shader} uTexture={target.texture} />
+            </mesh>
+            <mesh position={[(viewport.width/2 ) - (viewport.width /5/2) ,(viewport.height/2 ) - (viewport.height /5),0]}>
+                <planeBufferGeometry args={[viewport.width /5, viewport.height/5]}/>
+                <waveShaderMaterial22222 ref={shader1} uTexture={target.texture} />
+            </mesh>
+          
+        </group>
+      </>
+    )
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default function Home() {
     console.log('Home load')
   
@@ -55,7 +214,7 @@ export default function Home() {
       <main ref={ref} className="main">
             <Navbar/>
             <div style={{width:'100vw',height:'100vh',position:'fixed'}} ref={fixedView}>
-
+            
             </div>
             <div id="page-container" >
                 <div id="page-container-inner">
@@ -472,20 +631,30 @@ export default function Home() {
    
       <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }} performance={{ min: 0.1,max:0.2 }}>
         <Stats />
-    
+        <Perf deepAnalyze={true} />
         <Suspense fallback={ <Loader/>}>
-        <View track={boxPhysic}>
-          <BallLusion accent={colorNew}/>
+
+        <View index={2}  track={boxPhysic}>
+        <BallLusion accent={'black'}/> 
+            
+        
           <PerspectiveCamera makeDefault fov={36} position={[0, 0, 8]} />
+           
         </View>
-        <View track={fixedView}>
-         <EffSimuControls/>
+        <View  index={1} track={fixedView}>
+             <FBOScene multisample samples={3} stencilBuffer={false} format={THREE.RGBAFormat} />
+           {/*   <BoxGeomestry position={[0,0,0]}/> */}
+            {/*  <EffSimuControls/> */}
         </View>
         <View track={spaceShader}>
-            <SpaceShader/>
+            <SpaceWelcome/>
         </View>
-        {/* <EffNEnvBallLusion /> */}
+       
+       {/*  <EffectCP/> */}
+
+        {/* <EffectComposerCustom /> */}
         <Preload all />
+
         </Suspense>
       </Canvas>  
   
@@ -493,11 +662,20 @@ export default function Home() {
     </>
   )
 }
+
+
+
 function Loader() {
     const { active, progress, errors, item, loaded, total } = useProgress()
     return <Html center>{progress} % loaded</Html>
 }
-
+const EffectComposerCustom = () => {
+    <>
+    <EffectComposer>
+  
+    </EffectComposer>
+    </>
+}
 const EffNEnvBallLusion = () => {
   <>
     <EffectComposer disableNormalPass multisampling={8}>
@@ -517,3 +695,6 @@ const EffNEnvBallLusion = () => {
           <FooterSpace position={[0, 0, 4.6]} />
           <PerspectiveCamera makeDefault fov={20} />
         </View> */}
+
+
+        

@@ -1,7 +1,7 @@
 
 "use client"
 import * as THREE from 'three'
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { CuboidCollider, BallCollider, Physics, RigidBody } from '@react-three/rapier'
@@ -20,14 +20,19 @@ const shuffle = (accent = 0) => [
 ]
 
 export const BallLusion = ({accent}) => {
-
+    const groupRef = useRef(null)
+   useEffect(() => {
+    groupRef.current.name = 'BallLusion'
+   },[groupRef])
     const connectors = useMemo(() => shuffle(accent), [accent])
+   
     return (
        <>
         <color attach="background" args={['#141622']} />
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-        <Physics /* debug */ gravity={[0, 0, 0]}>
+        <group ref={groupRef}>
+        <Physics /* debug */ gravity={[0, 1, 0]} >
             <Pointer />
             {connectors.map((props, i) => <Connector key={i} {...props} />) /* prettier-ignore */}
            {/*  <Connector position={[10, 10, 5]}>
@@ -41,12 +46,15 @@ export const BallLusion = ({accent}) => {
                 </Model>
             </Connector> */}
         </Physics>
+        </group>
+      
        </>
     )
 }
 function Connector({ position, children, vec = new THREE.Vector3(), scale, r = THREE.MathUtils.randFloatSpread, accent, ...props }) {
     const api = useRef()
     const pos = useMemo(() => position || [r(2), r(2), r(2)], [])
+   
     useFrame((state, delta) => {
       //  console.log(localStorage.getItem('posCurrent'))
         delta = Math.min(0.1, delta)
@@ -66,7 +74,7 @@ function Connector({ position, children, vec = new THREE.Vector3(), scale, r = T
 function Pointer({ vec = new THREE.Vector3() }) {
     const ref = useRef()
     useFrame(({ mouse, viewport }) => {
-        ref.current?.setNextKinematicTranslation(vec.set((mouse.x * viewport.width) / 2, (mouse.y * viewport.height) / 2, 0))
+        ref.current?.setNextKinematicTranslation(vec.set((mouse.x * viewport.width) / 7, (mouse.y * viewport.height) / 7, 0))
     })
     return (
         <RigidBody position={[0, 0, 0]} type="kinematicPosition" colliders={false} ref={ref}>

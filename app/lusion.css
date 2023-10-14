@@ -616,7 +616,8 @@ html.is-black-bg #header,html.is-blue-bg #header {
     position: relative;
     display: flex;
     gap: 10.5em;
-    will-change: transform
+    will-change: transform;
+    opacity: 0.1 !important;
 }
 
 #header-right-sound-btn {

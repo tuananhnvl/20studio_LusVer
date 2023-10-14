@@ -66,7 +66,7 @@ export default class Advection extends ShaderPass{
         const boundaryM = new RawShaderMaterial({
             vertexShader: LINE_VERT,
             fragmentShader: ADVECTION_FRAG,
-            uniforms: this.uniforms
+            uniforms: this.uniforms,
         });
 
         this.line = new LineSegments(boundaryG, boundaryM);

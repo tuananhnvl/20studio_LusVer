@@ -33,10 +33,10 @@ export default class Simulation{
         this.options = {
             iterations_poisson: .05,
             iterations_viscous: .05,
-            mouse_force: 10,
-            resolution: 0.1,
-            cursor_size: 20,
-            viscous: 5,
+            mouse_force: 20,
+            resolution: .3,
+            cursor_size: 30,
+            viscous: 0.0,
             isBounce: false,
             dt: 0.014,
             isViscous: false,
@@ -81,7 +81,7 @@ export default class Simulation{
             src: this.fbos.vel_0,
             dst: this.fbos.vel_1
         });
-
+        console.log(this.advection)
         this.externalForce = new ExternalForce({
             cellScale: this.cellScale,
             cursor_size: this.options.cursor_size,

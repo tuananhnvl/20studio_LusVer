@@ -1,6 +1,4 @@
 "use client"
-import {WebGLRenderer,Clock} from "three";
-
 class Common{
     constructor(){
         this.width = null;
@@ -20,7 +18,7 @@ class Common{
     }
 
     init(gl){
-        this.pixelRatio = window.devicePixelRatio;
+      //  this.pixelRatio = window.devicePixelRatio;
 
         this.resize();
 
@@ -30,12 +28,12 @@ class Common{
 
         this.renderer.setSize( this.width, this.height );
 
-        this.renderer.setClearColor( 0x000000 );
+       // this.renderer.setClearColor( 0x000000 );
 
        // this.renderer.setPixelRatio(this.pixelRatio);
 
-        this.clock = new Clock();
-        this.clock.start();
+       // this.clock = new Clock();
+       // this.clock.start();
      }
 
     resize(){
@@ -46,10 +44,10 @@ class Common{
         if(this.renderer) this.renderer.setSize(this.width, this.height);
     }
 
-    update(){
+   /*  update(){
         this.delta = this.clock.getDelta(); // Math.min(0.01, this.clock.getDelta());
         this.time += this.delta;
-    }
+    } */
 }
 
 export default new Common();

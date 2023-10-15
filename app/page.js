@@ -143,7 +143,7 @@ import SceneFBOParicels from './components/SceneFBOParicels'
     })
     return (    
       <>
-        <PerspectiveCamera ref={cam} position={[0, 0, 0]} />
+        <PerspectiveCamera ref={cam} position={[0, 0, 4]} />
    
         {createPortal(  <EffSimuControls/>  ,scene)}
         <group>
@@ -641,7 +641,7 @@ export default function Home() {
 
         <View index={2}  track={boxPhysic}>
             <BallLusion accent={colorNew}/> 
-            <PerspectiveCamera makeDefault fov={36} position={[0, 0, 5]} />
+            <PerspectiveCamera makeDefault far={100} fov={36} position={[0, 0, 6]} />
            
         </View>
         <View  index={1} track={fixedView}>

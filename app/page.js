@@ -636,7 +636,7 @@ export default function Home() {
     </div>
     <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }} performance={{ min: 0.1,max:0.2 }}>
         <Stats />
-        <Perf deepAnalyze={true} />
+      {/*   <Perf deepAnalyze={true} /> */}
         <Suspense fallback={ <Loader/>}>
 
         <View index={2}  track={boxPhysic}>
@@ -645,18 +645,18 @@ export default function Home() {
            
         </View>
         <View  index={1} track={fixedView}>
-             <FBOScene multisample samples={3} stencilBuffer={false} format={THREE.RGBAFormat} />
+             {/* <FBOScene multisample samples={3} stencilBuffer={false} format={THREE.RGBAFormat} /> */}
            {/*   <BoxGeomestry position={[0,0,0]}/> */}
             {/*  <EffSimuControls/> */}
         </View>
         <View track={spaceShader}>
-            <SpaceWelcome/>
+           {/*  <SpaceWelcome/> */}
         </View>
        
        {/*  <EffectCP/> */}
 
         {/* <EffectComposerCustom /> */}
-        <Preload all />
+      {/*   <Preload all /> */}
 
         </Suspense>
       </Canvas>  

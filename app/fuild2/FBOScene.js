@@ -86,7 +86,7 @@ const texture = useTexture('noise-dis1.png')
         <PerspectiveCamera ref={cam} position={[0, 0, 0]} />
         {createPortal(<EffSimuControls/>, scene)}
         <mesh>
-          <planeBufferGeometry args={[viewport.width + 3, viewport.height+ 3]} />
+          <planeGeometry args={[viewport.width + 3, viewport.height+ 3]} />
           <waveShaderMaterial ref={shader} uTexture={target.texture} />
         </mesh>
       </>

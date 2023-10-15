@@ -4,9 +4,14 @@
   html,body {
     margin: 0;
     padding:0 ;
-    overflow: hidden;
+
     background-color: var(--bg-color);
     cursor:pointer;
+  }
+  @media(max-width:600px) {
+    canvas {
+        display:none !important;
+    }
   }
   .main {
     width: 100%;

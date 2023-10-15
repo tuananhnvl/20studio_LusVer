@@ -7,14 +7,14 @@ import Common from './modules/Common'
 import Mouse from './modules/Mouse'
 
 import { FACE_VERT,COLOR_FRAG } from './modules/glsl/ShaderAll';
-import {AdditiveBlending,Mesh,PlaneGeometry,BoxGeometry,RawShaderMaterial,Vector2,Group,MeshBasicMaterial} from 'three'
+import {Mesh,PlaneGeometry,BoxGeometry,RawShaderMaterial,Vector2,Group,MeshBasicMaterial} from 'three'
 
 
 export default function  EffSimuControls() {
     const { gl,scene } = useThree()
     const simulationCurrent = useRef(null)
 
-    console.log(gl,scene)
+   
     useEffect(() => {
         const simulation = new Simulation();
         simulationCurrent.current = simulation

@@ -32,13 +32,15 @@ class Mouse{
     }
     onDocumentTouchStart( event ) {
         if ( event.touches.length === 1 ) {
-            // event.preventDefault();
+             event.preventDefault();
+             console.log( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
             this.setCoords( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+       
         }
     }
     onDocumentTouchMove( event ) {
         if ( event.touches.length === 1 ) {
-            // event.preventDefault();
+             event.preventDefault();
             
             this.setCoords( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
         }

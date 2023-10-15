@@ -86,7 +86,7 @@ const FBOScene = ({ props }) => {
         <group>
            <group >
             <mesh>
-                  <planeBufferGeometry args={[16,6]} />
+                  <planeGeometry args={[16,6]} />
                 {/*  <waveShaderMaterial ref={shader} uTexture={target.texture} /> */}
                   <meshBasicMaterial map={target.texture}/>
                 

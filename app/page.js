@@ -24,7 +24,7 @@ import { BallLusion } from './components/BallLusion'
 import EffSimuControls from './fuild2/EffSimuControls'
 import BoxGeomestry from './components/BoxGeomestry'
 import SpaceWelcome from './components/SpaceWelcome'
-
+import SceneFBOParicels from './components/SceneFBOParicels'
 
 
 
@@ -133,12 +133,12 @@ import SpaceWelcome from './components/SpaceWelcome'
   
   
     useEffect(() => {
-        shader.current.transparent = true
+       shader.current.transparent = true
         
        
     },[shader,texture])
     useFrame(({ clock }) => {
-        shader.current.uTime = clock.getElapsedTime()
+       shader.current.uTime = clock.getElapsedTime()
         shader1.current.uTime = clock.getElapsedTime()
     })
     return (    
@@ -148,14 +148,15 @@ import SpaceWelcome from './components/SpaceWelcome'
         {createPortal(  <EffSimuControls/>  ,scene)}
         <group>
             <mesh>
-                <planeBufferGeometry args={[viewport.width,viewport.height]} />
+                <planeGeometry args={[viewport.width,viewport.height]} />
                 <waveShaderMaterial ref={shader} uTexture={target.texture} />
+              {/*   <meshBasicMaterial color={'blue'}/> */}
             </mesh>
             <mesh position={[(viewport.width/2 ) - (viewport.width /5/2) ,(viewport.height/2 ) - (viewport.height /5),0]}>
-                <planeBufferGeometry args={[viewport.width /5, viewport.height/5]}/>
+                <planeGeometry args={[viewport.width /5, viewport.height/5]}/>
                 <waveShaderMaterial22222 ref={shader1} uTexture={target.texture} />
             </mesh>
-          
+            
         </group>
       </>
     )
@@ -185,12 +186,14 @@ export default function Home() {
   const [ref, boxPhysic, lenis, spaceShader, fixedView, view5, view6] = useRefs(null)
   const listColorBall = ['#4060ff', '#20ffa0', '#ff4060', '#ffcc00']
   const [colorNew, changePropsForCanvas] = useReducer((state) => ++state % listColorBall.length, 0)
-
-  useEffect(() => {
+ 
+  /* useEffect(() => {
     console.log('frist load -- lenis')
-    lenis.current = new Lenis()
+    lenis.current = new Lenis({
+        syncTouch:true
+    })
     lenis.current.on('scroll', (e) => {
-
+ localStorage.setItem('posCurrent', 0)
       localStorage.setItem('posCurrent', e.scroll)
     })
 
@@ -203,11 +206,11 @@ export default function Home() {
 
   }, [])
 
+
+ */
   const handleButtonClick = () => {
-    lenis.current.scrollTo('.main')
+   // lenis.current.scrollTo('.main')
   };
-
-
   return (
 
     <>
@@ -627,18 +630,18 @@ export default function Home() {
       </main>
 
 
-
+    <div >
    
-      <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }} performance={{ min: 0.1,max:0.2 }}>
+  
+    </div>
+    <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }} performance={{ min: 0.1,max:0.2 }}>
         <Stats />
         <Perf deepAnalyze={true} />
         <Suspense fallback={ <Loader/>}>
 
         <View index={2}  track={boxPhysic}>
-        <BallLusion accent={'black'}/> 
-            
-        
-          <PerspectiveCamera makeDefault fov={36} position={[0, 0, 8]} />
+            <BallLusion accent={colorNew}/> 
+            <PerspectiveCamera makeDefault fov={36} position={[0, 0, 5]} />
            
         </View>
         <View  index={1} track={fixedView}>
@@ -657,7 +660,7 @@ export default function Home() {
 
         </Suspense>
       </Canvas>  
-  
+    
       
     </>
   )

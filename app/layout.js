@@ -1,4 +1,4 @@
-import './lenis.css'
+//import './lenis.css'
 import './lusion.css'
 //import './globals.css'
 

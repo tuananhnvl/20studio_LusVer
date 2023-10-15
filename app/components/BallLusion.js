@@ -32,7 +32,7 @@ export const BallLusion = ({ accent }) => {
             <ambientLight intensity={0.25} />
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
             <group ref={groupRef}>
-                <Physics /* debug */ gravity={[0, 1, 0]} >
+                <Physics /* debug */ gravity={[4,4,4]} >
                     <Pointer />
                     {connectors.map((props, i) => <Connector key={i} {...props} />) /* prettier-ignore */}
                     {/*  <Connector position={[10, 10, 5]}>
@@ -70,26 +70,26 @@ function Connector({ key, position, children, vec = new THREE.Vector3(), scale, 
 
 function Pointer({ vec = new THREE.Vector3() }) {
     const ref = useRef()
-    const checkFlatform = useRef()  
-     
-    const bool = null 
+    const checkFlatform = useRef()
+
+    const bool = null
 
     useEffect(() => {
         let a = CheckDevice(bool)
         checkFlatform.current = a
-        if(checkFlatform.current) {CensorConrols()}
-       
+        if (checkFlatform.current) { CensorConrols() }
+
     }, []);
-    
+
     useFrame(({ mouse, viewport }) => {
-        if(checkFlatform.current === true) {
-            ref.current?.setNextKinematicTranslation(vec.set(localStorage.getItem('xAr'),0, 0))
-        } else if(checkFlatform.current === false) {
-            ref.current?.setNextKinematicTranslation(vec.set(mouse.x,mouse.y, 0))
-        }else if(checkFlatform.current === null) {
+        if (checkFlatform.current === true) {
+            ref.current?.setNextKinematicTranslation(vec.set(localStorage.getItem('xAr') * 2,localStorage.getItem('yAr') * 2, 0))
+        } else if (checkFlatform.current === false) {
+            ref.current?.setNextKinematicTranslation(vec.set(mouse.x * 2, mouse.y * 2, 0))
+        } else if (checkFlatform.current === null) {
             console.log('loading...')
         }
-        
+
     })
     return (
         <RigidBody position={[0, 0, 0]} type="kinematicPosition" colliders={false} ref={ref}>
@@ -122,24 +122,28 @@ function Model({ children, color = 'white', roughness = 0, ...props }) {
 
 function CensorConrols() {
     localStorage.setItem('xAr', 0)
-    window.addEventListener("devicemotion", (event) => { 
+
+    localStorage.setItem('yAr', 0)
+    window.addEventListener("devicemotion", (event) => {
         console.log(event.acceleration.x)
-        localStorage.setItem('xAr',   event.acceleration.x)
+        localStorage.setItem('xAr', event.acceleration.x)
+
+        localStorage.setItem('yAr', event.acceleration.y)
     })
-     return null
+    return null
 }
 function CheckDevice(a) {
-    
+
     if (window.navigator.userAgent.match(/Android/i)
-         || window.navigator.userAgent.match(/webOS/i)
-         || window.navigator.userAgent.match(/iPhone/i)
-         || window.navigator.userAgent.match(/iPad/i)
-         || window.navigator.userAgent.match(/iPod/i)
-         || window.navigator.userAgent.match(/BlackBerry/i)
-         || window.navigator.userAgent.match(/Windows Phone/i)) {
-            a = true ;
-         } else {
-            a = false ;  
-         }
+        || window.navigator.userAgent.match(/webOS/i)
+        || window.navigator.userAgent.match(/iPhone/i)
+        || window.navigator.userAgent.match(/iPad/i)
+        || window.navigator.userAgent.match(/iPod/i)
+        || window.navigator.userAgent.match(/BlackBerry/i)
+        || window.navigator.userAgent.match(/Windows Phone/i)) {
+        a = true;
+    } else {
+        a = false;
+    }
     return a
 } 

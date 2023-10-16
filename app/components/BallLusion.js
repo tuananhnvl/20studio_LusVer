@@ -20,13 +20,14 @@ const shuffle = (accent = 0) => [
 ]
 
 export const BallLusion = ({ accent }) => {
-   
+    
     const groupRef = useRef(null)
     const {viewport} = useThree()
     useEffect(() => {
         localStorage.setItem('modeMobie',false)
         groupRef.current.name = 'BallLusion'
-        groupRef.current.position.z=  2
+        groupRef.current.position.z=  2 
+      
     }, [groupRef])
     const connectors = useMemo(() => shuffle(accent), [accent])
     useFrame(() => {
@@ -144,6 +145,12 @@ function CensorConrols() {
         localStorage.setItem('xAr', event.acceleration.x)
 
         localStorage.setItem('yAr', event.acceleration.y)
+    })  
+    window.addEventListener("deviceorientation", (event) => {
+   
+        localStorage.setItem('xA', event.alpha)
+
+        localStorage.setItem('yA', event.beta)
     })
     return null
 }

@@ -31,7 +31,7 @@ export const BallLusion = ({ accent }) => {
     const connectors = useMemo(() => shuffle(accent), [accent])
     useFrame(() => {
         if(localStorage.getItem('modeMobie') == true) {
-            groupRef.current.position.x =  localStorage.getItem('yAr')/8
+            groupRef.current.position.x =  localStorage.getItem('yAr')
         } 
        
     })
@@ -99,7 +99,7 @@ function Pointer({ vec = new THREE.Vector3() }) {
 
     useFrame(({ mouse, viewport }) => {
         if (checkFlatform.current === true) {
-            ref.current?.setNextKinematicTranslation(vec.set(localStorage.getItem('xAr') * 2,localStorage.getItem('yAr') * 2, 0))
+          //  ref.current?.setNextKinematicTranslation(vec.set(localStorage.getItem('xAr') * 2,localStorage.getItem('yAr') * 2, 0))
         } else if (checkFlatform.current === false) {
             ref.current?.setNextKinematicTranslation(vec.set(mouse.x * 2, mouse.y * 2, 0))
         } else if (checkFlatform.current === null) {

@@ -57,7 +57,7 @@ const _changeEvent = { type: 'change' };
 
 		const setObjectQuaternion = function ( quaternion, alpha, beta, gamma, orient ) {
 
-			_euler.set( beta, alpha, - gamma, 'YXZ' ); // 'ZXY' for the device, but 'YXZ' for us
+			_euler.set( beta,  alpha, - gamma, 'YXZ' ); // 'ZXY' for the device, but 'YXZ' for us
 
 			quaternion.setFromEuler( _euler ); // orient the device
 
@@ -118,7 +118,7 @@ const _changeEvent = { type: 'change' };
 
 			if ( device ) {
 
-				const alpha = device.alpha ? MathUtils.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
+				const alpha = device.alpha ? MathUtils.degToRad( device.alpha )  : 0; // Z
 
 				const beta = device.beta ? MathUtils.degToRad( device.beta ) : 0; // X'
 

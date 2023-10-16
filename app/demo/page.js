@@ -1,7 +1,9 @@
 "use client" 
 import { useEffect,useRef } from 'react'
 import {DeviceOrientationControls} from '../components/DeviceOrientationControls'
-import {Canvas,useFrame,useThree} from '@react-three/fiber'
+import {Canvas,useFrame,useThree,useLoader } from '@react-three/fiber'
+import { BallLusion } from '../components/BallLusion'
+import { Stats, OrbitControls, Environment } from '@react-three/drei'
 /* https://ugpfn.csb.app/ */
 function Controls() {
     const {camera} = useThree()
@@ -24,13 +26,16 @@ export default function page() {
   return (
     <div style={{width:'100vw',height:'100vh',position:'fixed'}}>
         <Canvas>
-            <group>
+          {/*   <group>
                 <mesh>
-                    <boxGeometry args={[3,3,3]}/>
+                    <boxGeometry args={[5,3,3]}/>
                     <meshBasicMaterial color={'blue'}/>
                 </mesh>
-            </group>
+            </group>  */}
+            <BallLusion action={false}/>
+            <Environment files="./hdr.hdr" background/>
             <Controls/>
+            <OrbitControls/>
         </Canvas>
     </div>
   )

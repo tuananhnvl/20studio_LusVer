@@ -19,8 +19,8 @@ const shuffle = (accent = 0) => [
     { id: 7, color: '#4060ff', roughness: 0.25 }
 ]
 
-export const BallLusion = ({ accent }) => {
-    
+export const BallLusion = ({ accent,action }) => {
+    console.log(action)
     const groupRef = useRef(null)
     const {viewport} = useThree()
     useEffect(() => {

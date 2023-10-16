@@ -682,7 +682,7 @@ export default function Home() {
         <Suspense fallback={ <Loader/>}>
 
         <View index={2}  track={boxPhysic}>
-            <BallLusion accent={colorNew}/> 
+            <BallLusion accent={colorNew} action={true}/> 
           {/*   <PerspectiveCamera makeDefault far={100} fov={36} position={[0, 0, 6]} /> */}
            
         </View>

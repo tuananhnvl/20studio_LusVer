@@ -2,7 +2,7 @@
 "use client"
 import * as THREE from 'three'
 import { useRef, useMemo, useEffect } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, OrbitControls } from '@react-three/drei'
 import { CuboidCollider, BallCollider, Physics, RigidBody } from '@react-three/rapier'
 import { easing } from 'maath'
@@ -20,18 +20,27 @@ const shuffle = (accent = 0) => [
 ]
 
 export const BallLusion = ({ accent }) => {
+   
     const groupRef = useRef(null)
+    const {viewport} = useThree()
     useEffect(() => {
+        localStorage.setItem('modeMobie',false)
         groupRef.current.name = 'BallLusion'
+        groupRef.current.position.z=  2
     }, [groupRef])
     const connectors = useMemo(() => shuffle(accent), [accent])
-
+    useFrame(() => {
+        if(localStorage.getItem('modeMobie') == true) {
+            groupRef.current.position.x =  localStorage.getItem('yAr')/8
+        } 
+       
+    })
     return (
         <>
             <color attach="background" args={['#141622']} />
             <ambientLight intensity={0.25} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-            <group ref={groupRef}>
+            <spotLight position={[5, 5, 15]} angle={0.15} penumbra={.1} intensity={.5} castShadow />
+            <group ref={groupRef} >
                 <Physics /* debug */ gravity={[4,4,4]} >
                     <Pointer />
                     {connectors.map((props, i) => <Connector key={i} {...props} />) /* prettier-ignore */}
@@ -42,6 +51,13 @@ export const BallLusion = ({ accent }) => {
             </Connector>*/}
                 </Physics>
             </group>
+           {/*  <group position={[0,0,2]} >
+                <mesh castShadow receiveShadow >
+                    <planeGeometry args={[viewport.width/2,viewport.height/2]}/>
+                    <meshBasicMaterial color={'black'}/>
+                </mesh>
+            </group> */}
+            
             {/*   <OrbitControls/> */}
         </>
     )
@@ -77,7 +93,7 @@ function Pointer({ vec = new THREE.Vector3() }) {
     useEffect(() => {
         let a = CheckDevice(bool)
         checkFlatform.current = a
-        if (checkFlatform.current) { CensorConrols() }
+        if (checkFlatform.current) { CensorConrols();  localStorage.setItem('modeMobie',true) }
 
     }, []);
 
@@ -122,10 +138,11 @@ function Model({ children, color = 'white', roughness = 0, ...props }) {
 
 function CensorConrols() {
     localStorage.setItem('xAr', 0)
-
     localStorage.setItem('yAr', 0)
+      localStorage.setItem('modeMobie',true)
     window.addEventListener("devicemotion", (event) => {
         console.log(event.acceleration.x)
+      
         localStorage.setItem('xAr', event.acceleration.x)
 
         localStorage.setItem('yAr', event.acceleration.y)

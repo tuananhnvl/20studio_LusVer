@@ -32,7 +32,7 @@ const WaveShaderMaterial = shaderMaterial(
   `
 )
 extend({WaveShaderMaterial})
-const FBOScene = ({ props }) => {
+const FBOSceneSim = ({ props }) => {
     const {viewport} = useThree()
     const target = useFBO(props)
     const cam = useRef()
@@ -106,7 +106,7 @@ const FBOScene = ({ props }) => {
 
 export default function SpaceAll() {
   return (
-    <FBOScene multisample samples={5} stencilBuffer={false} format={RGBAFormat} />
+    <FBOSceneSim multisample samples={5} stencilBuffer={false} format={RGBAFormat} />
   )
 }
 

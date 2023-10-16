@@ -20,7 +20,8 @@ import useRefs from 'react-use-refs'
 import { Perf } from 'r3f-perf'
 import SpaceShader from './components/SpaceShader'
 import Navbar from './components/Navbar'
-import { BallLusion } from './components/BallLusion'
+import { BallLusion } from './components/BallLusion'  
+import  {FBOSceneSim} from './fuild2/FBOSceneSim'
 import EffSimuControls from './fuild2/EffSimuControls'
 import BoxGeomestry from './components/BoxGeomestry'
 import SpaceWelcome from './components/SpaceWelcome'
@@ -28,11 +29,7 @@ import SceneFBOParicels from './components/SceneFBOParicels'
 
 
 
-
-
-
-
-  const WaveShaderMaterial = shaderMaterial(
+const ShaderDisplay = shaderMaterial(
     { uTime: 0, uTexture: null,uTextureNoiseDis:null},
     `
       varying vec2 vUv;
@@ -77,7 +74,7 @@ import SceneFBOParicels from './components/SceneFBOParicels'
       }
     `
   )
-  const WaveShaderMaterial22222 = shaderMaterial(
+  const ShaderMonitor = shaderMaterial(
     { uTime: 0, uTexture: null,uTextureNoiseDis:null},
     `
       varying vec2 vUv;
@@ -102,8 +99,53 @@ import SceneFBOParicels from './components/SceneFBOParicels'
       }
     `
   )
-  extend({ WaveShaderMaterial })
-  extend({ WaveShaderMaterial22222 })
+
+
+  const ShaderImg = shaderMaterial(
+    { uTime: 0, uTextureImage: null,uTextureTarget:null},
+    `
+      varying vec2 vUv;
+      void main() {
+       
+      
+        vec3 pos = position;
+
+        vUv = uv / 1.5;
+        gl_Position = vec4(pos, 1.0);
+      }
+    `,
+    `
+      precision mediump float;
+      uniform float uTime;
+      uniform sampler2D uTextureImage;
+      uniform sampler2D uTextureTarget;
+      uniform vec3 uColor;
+  
+      varying vec2 vUv;
+
+      void main() {
+
+
+          
+        vec2 scaleCenter = vec2(0.75);
+        vec2 uvs = (vUv - scaleCenter) * 2. + scaleCenter;
+        
+
+        
+
+        vec3 t = texture2D(uTextureImage, uvs).rgb;   
+        vec3 n = texture2D(uTextureTarget, vUv).xyz;   
+  
+        gl_FragColor = vec4((t),1.);
+        
+      }
+    `
+  )
+
+
+  extend({ ShaderDisplay })
+  extend({ ShaderMonitor })
+  extend({ ShaderImg})
   const FBOScene = ({ props }) => {
     const {viewport} = useThree()
     const target = useFBO(props)
@@ -119,8 +161,9 @@ import SceneFBOParicels from './components/SceneFBOParicels'
         const scene1 = new THREE.Scene()
         return scene1
       }, [])
-    const texture = useTexture('noise-dis1.png')
-      
+    const texture = useTexture('CUSTOMER.jpg')
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.LinearMipMapLinearFilter;
     useFrame((state) => {
      
      
@@ -132,46 +175,45 @@ import SceneFBOParicels from './components/SceneFBOParicels'
     })
   
   
-    useEffect(() => {
-       shader.current.transparent = true
+    useEffect(() => { 
+        if(shader.current) { 
+            shader.current.transparent = true
+        }
+        
         
        
     },[shader,texture])
-    useFrame(({ clock }) => {
-       shader.current.uTime = clock.getElapsedTime()
-        shader1.current.uTime = clock.getElapsedTime()
+    useFrame(({ clock }) => {  
+         
+        if(shader.current) {         shader.current.uTime = clock.getElapsedTime()
+            shader1.current.uTime = clock.getElapsedTime() }
+
     })
     return (    
       <>
-        <PerspectiveCamera ref={cam} position={[0, 0, 4]} />
+        <PerspectiveCamera ref={cam} position={[0, 0, 0]} />
    
         {createPortal(  <EffSimuControls/>  ,scene)}
         <group>
             <mesh>
-                <planeGeometry args={[viewport.width,viewport.height]} />
-                <waveShaderMaterial ref={shader} uTexture={target.texture} />
-              {/*   <meshBasicMaterial color={'blue'}/> */}
+                <planeGeometry args={[viewport.width,viewport.height,2,2]} />
+                <shaderDisplay ref={shader} uTexture={target.texture} />
+               {/*  <meshBasicMaterial color={'blue'}  wireframe={true}/> */}
             </mesh>
             <mesh position={[(viewport.width/2 ) - (viewport.width /5/2) ,(viewport.height/2 ) - (viewport.height /5),0]}>
                 <planeGeometry args={[viewport.width /5, viewport.height/5]}/>
-                <waveShaderMaterial22222 ref={shader1} uTexture={target.texture} />
+                <shaderMonitor ref={shader1} uTexture={target.texture} />
             </mesh>
-            
+           {/*  <mesh>
+
+               <planeGeometry args={[.5,1,32,32]}/>
+                <shaderImg uTextureImage={texture} uTextureTarget={target.texture} wireframe={false}/>
+            </mesh> */}
         </group>
       </>
     )
   }
   
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -187,10 +229,10 @@ export default function Home() {
   const listColorBall = ['#4060ff', '#20ffa0', '#ff4060', '#ffcc00']
   const [colorNew, changePropsForCanvas] = useReducer((state) => ++state % listColorBall.length, 0)
  
-  /* useEffect(() => {
+  useEffect(() => {
     console.log('frist load -- lenis')
     lenis.current = new Lenis({
-        syncTouch:true
+        syncTouch:false
     })
     lenis.current.on('scroll', (e) => {
  localStorage.setItem('posCurrent', 0)
@@ -207,9 +249,9 @@ export default function Home() {
   }, [])
 
 
- */
+
   const handleButtonClick = () => {
-   // lenis.current.scrollTo('.main')
+    lenis.current.scrollTo('.main')
   };
   return (
 
@@ -641,13 +683,15 @@ export default function Home() {
 
         <View index={2}  track={boxPhysic}>
             <BallLusion accent={colorNew}/> 
-            <PerspectiveCamera makeDefault far={100} fov={36} position={[0, 0, 6]} />
+          {/*   <PerspectiveCamera makeDefault far={100} fov={36} position={[0, 0, 6]} /> */}
            
         </View>
         <View  index={1} track={fixedView}>
-             {/* <FBOScene multisample samples={3} stencilBuffer={false} format={THREE.RGBAFormat} /> */}
-           {/*   <BoxGeomestry position={[0,0,0]}/> */}
-            {/*  <EffSimuControls/> */}
+             <FBOScene multisample samples={3} stencilBuffer={false} format={THREE.RGBAFormat} /> 
+          {/*  <FBOSceneSim   /> */}
+            {/*  <BoxGeomestry position={[0,0,0]}/> */}
+         
+         {/*     <EffSimuControls/> */}
         </View>
         <View track={spaceShader}>
            {/*  <SpaceWelcome/> */}
@@ -656,7 +700,7 @@ export default function Home() {
        {/*  <EffectCP/> */}
 
         {/* <EffectComposerCustom /> */}
-      {/*   <Preload all /> */}
+        <Preload all />
 
         </Suspense>
       </Canvas>  

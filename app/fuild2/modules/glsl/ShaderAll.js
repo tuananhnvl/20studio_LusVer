@@ -40,7 +40,54 @@ void main(){
 }
 
 `
+export const BASE_VERT = `
+precision highp float;
 
+uniform vec2 px;
+uniform vec2 boundarySpace;
+uniform sampler2D pressure_1;
+uniform float uTime;
+varying vec2 vUv;
+
+
+
+void main(){
+
+    vec3 checkv2Tex =  texture2D(pressure_1,position.xy + 0.5).xyz;
+
+    vec3 posGet = position;
+    posGet /= 2.;
+    posGet.x += sin(uv.y * 2.0 + uTime) * 0.0002;
+    //posGet.y += sin(uv.x * 2.0 + uTime) * 0.02;
+    posGet.x -= checkv2Tex.x / 100.;
+    vUv = position.xy;
+
+    gl_Position = vec4(posGet,1.);
+}
+
+`
+export const COLOR_BASE = ` 
+    precision highp float;
+    uniform sampler2D vel_1;
+    uniform sampler2D pressure_1;
+    uniform sampler2D vel_0;
+    uniform sampler2D pressure_0;
+    uniform sampler2D uImg;
+    varying vec2 vUv;
+
+    void main() {
+        vec4 color = vec4(0.3,0.5,0.9,1. );
+        vec2 uvs = vUv;
+        
+        uvs += .5;
+        uvs /= 3.;
+        vec4 img = texture2D(uImg,uvs);
+        vec4 ext =  texture2D(pressure_1,uvs);
+        vec4 re = ext; 
+        vec4 fi = vec4(re.xyz,.005);
+        gl_FragColor = img; 
+    }
+`
 export const COLOR_FRAG = `
     precision highp float;
     uniform sampler2D vel_1;
@@ -50,22 +97,26 @@ export const COLOR_FRAG = `
     varying vec2 uv;
 
     void main(){
-         vec2 vel = texture2D(pressure_1, uv).xy;
-         float len = length(vel);
-          vel = vel * 0.5 + 0.5;
-        
-         vec3 color = vec3(vel.x, vel.y, 1.0);
-          color = mix(vec3(0.), color, len);
-        
-       gl_FragColor = vec4(color,1.);
-        
+        vec2 vel = texture2D(pressure_1, uv).xy;
+        float len = length(vel);
+         vel = vel * 0.5 + 0.5;
+       
+        vec3 color = vec3(vel.x, vel.y, 1.0);
+         color = mix(vec3(0.), color, len);
+       
+      gl_FragColor = vec4(color,1.);
+ 
+   
       
        
     }
 
-`
+`  
+/* with in fbo 
+
+*/
 /*    wihout fbo
-  vec3 t = texture2D(pressure_1, uv).rgb;   
+      vec3 t = texture2D(pressure_1, uv).rgb;   
         vec3 r  =  t;
         float a = (r.x - .1);
         if(r.r < 0.1 && r.b < 0.1) {
@@ -110,6 +161,7 @@ void main(){
 }
 
 `
+
 export const FACE_VERT = `
 precision highp float;
 attribute vec3 position;

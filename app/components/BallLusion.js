@@ -30,9 +30,7 @@ export const BallLusion = ({ accent }) => {
     }, [groupRef])
     const connectors = useMemo(() => shuffle(accent), [accent])
     useFrame(() => {
-        if(localStorage.getItem('modeMobie') == true) {
-            groupRef.current.position.x =  localStorage.getItem('yAr')
-        } 
+        groupRef.current.position.x =  1
        
     })
     return (

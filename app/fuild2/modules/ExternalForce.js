@@ -25,6 +25,7 @@ export default class ExternalForce extends ShaderPass{
             vertexShader: MOUSE_VERT,
             fragmentShader: EXTARNALFORCE_FRAG,
             blending: AdditiveBlending,
+            wireframe: false,
             uniforms: {
                 px: {
                     value: simProps.cellScale
@@ -42,6 +43,7 @@ export default class ExternalForce extends ShaderPass{
         })
 
         this.mouse = new Mesh(mouseG, mouseM);
+        console.log(this.mouse)
         this.scene.add(this.mouse);
     }
 
@@ -57,7 +59,7 @@ export default class ExternalForce extends ShaderPass{
 
         const uniforms = this.mouse.material.uniforms;
 
-        uniforms.force.value.set(forceX, forceY);
+        uniforms.force.value.set(forceX, forceY );
         uniforms.center.value.set(centerX, centerY);
         uniforms.scale.value.set(props.cursor_size, props.cursor_size);
 

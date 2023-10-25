@@ -132,8 +132,9 @@ uniform float dt;
 uniform vec2 px;
 varying vec2 uv;
 
-void main(){
-    float x0 = texture2D(velocity, uv-vec2(px.x, 0)).x;
+void main(){ 
+    //   float x0 = texture2D(velocity, uv-vec2(px.x, 0)).x; split space
+    float x0 = texture2D(velocity, uv+vec2(px.x, 0)).x;
     float x1 = texture2D(velocity, uv+vec2(px.x, 0)).x;
     float y0 = texture2D(velocity, uv-vec2(0, px.y)).y;
     float y1 = texture2D(velocity, uv+vec2(0, px.y)).y;
@@ -157,7 +158,8 @@ void main(){
     vec2 circle = (vUv - 0.5) * 2.0;
     float d = 1.0-min(length(circle), 1.0);
     d *= d;
-    gl_FragColor = vec4(force * d, 0, 1);
+    gl_FragColor = vec4(force * d, 0, 1); 
+    //gl_FragColor = vec4(1.,.5, 0, 1);
 }
 
 `
@@ -219,7 +221,7 @@ uniform sampler2D pressure;
 uniform sampler2D divergence;
 uniform vec2 px;
 varying vec2 uv;
-float maybeSize =  2.;
+float maybeSize =  1.;
 void main(){    
     // poisson equation
   
@@ -241,17 +243,19 @@ uniform vec2 px;
 uniform float dt;
 varying vec2 uv;
 
-void main(){
-    float step =  1.;
 
-    float p0 = texture2D(pressure, uv+vec2(px.x * step, 0)).r;
+
+void main(){
+    float step =  1. ;
+
+    float p0 = texture2D(pressure, uv-vec2(px.x * step, 0)).r;
     float p1 = texture2D(pressure, uv-vec2(px.x * step, 0)).r;
     float p2 = texture2D(pressure, uv+vec2(0, px.y * step)).r;
     float p3 = texture2D(pressure, uv-vec2(0, px.y * step)).r;
 
     vec2 v = texture2D(velocity, uv).xy;
     vec2 gradP = vec2(p0 - p1, p2 - p3) * 0.5;
-    v = v - gradP * (dt);
+     v = v - gradP * (dt);
         
     gl_FragColor = vec4(v, 0.0, 1.0);
 }

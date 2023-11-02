@@ -1,6 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
 *{
     box-sizing: border-box;
   }
+
+
+
+
   html,body {
     margin: 0;
     padding:0 ;
@@ -270,24 +275,24 @@ a,a:active,a:hover,a:visited {
 }
 
 /* @font-face {
-    font-family: Aeonik;
-    src: url(/assets/fonts/Aeonik-Regular.woff2) format("woff2"),url(/assets/fonts/Aeonik-Regular.woff) format("woff");
+    font-family: Playfair Display;
+    src: url(/assets/fonts/Playfair Display-Regular.woff2) format("woff2"),url(/assets/fonts/Playfair Display-Regular.woff) format("woff");
     font-weight: 400;
     font-style: normal;
     font-display: block
 }
 
 @font-face {
-    font-family: Aeonik;
-    src: url(/assets/fonts/Aeonik-Medium.woff2) format("woff2"),url(/assets/fonts/Aeonik-Medium.woff) format("woff");
+    font-family: Playfair Display;
+    src: url(/assets/fonts/Playfair Display-Medium.woff2) format("woff2"),url(/assets/fonts/Playfair Display-Medium.woff) format("woff");
     font-weight: 500;
     font-style: normal;
     font-display: block
 }
 
 @font-face {
-    font-family: Aeonik;
-    src: url(/assets/fonts/Aeonik-RegularItalic.woff2) format("woff2"),url(/assets/fonts/Aeonik-RegularItalic.woff) format("woff");
+    font-family: Playfair Display;
+    src: url(/assets/fonts/Playfair Display-RegularItalic.woff2) format("woff2"),url(/assets/fonts/Playfair Display-RegularItalic.woff) format("woff");
     font-weight: 400;
     font-style: italic;
     font-display: block
@@ -318,7 +323,7 @@ a,a:active,a:hover,a:visited {
 } */
 
 html,body,h1,h2,h3,h4,button,input {
-    font-family: Aeonik;
+    font-family: Playfair Display;
     font-weight: 400;
     font-style: normal
 }
@@ -593,7 +598,8 @@ html.is-black-bg #header,html.is-blue-bg #header {
 
 #header-background.--opened {
     transition: .2s opacity;
-    pointer-events: auto;
+    pointer-events: none;
+
     opacity: 1;
 }
 
@@ -1353,12 +1359,13 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
 .project-item {
     position: relative;
     float: left;
-    grid-column: span 6 / span 6;
+   /*  grid-column: span 6 / span 6; */
+   grid-column: span 4 / span 4;
     cursor: pointer;
     pointer-events: auto
 }
 
-.project-item:nth-child(n + 3) {
+.project-item:nth-child(n + 4) {
     margin-top: 5em
 }
 
@@ -1387,7 +1394,7 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
     height: 100%;
     object-fit: contain;
     border-radius: 15px;
-    background:greenyellow;
+    border:1px solid gray;
 }
 
 .project-item-toggle {
@@ -1552,7 +1559,7 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
 
 #video-overlay__play-btn {
     font-size: 1em;
-    font-family: Aeonik;
+    font-family: Playfair Display;
     font-weight: 400;
     text-transform: uppercase;
     word-wrap: break-word;
@@ -1573,7 +1580,7 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
 
 #video-overlay__mute-btn {
     font-size: 1em;
-    font-family: Aeonik;
+    font-family: Playfair Display;
     font-weight: 400;
     text-transform: uppercase;
     word-wrap: break-word;
@@ -2174,7 +2181,7 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
     border-radius: 5.3125em;
     font-size: clamp(.875rem,1vw,1.75rem);
     background: #fff;
-    font-family: Aeonik;
+    font-family: Playfair Display;
     text-transform: uppercase;
     width: fit-content;
     height: 3.375em;
@@ -2352,7 +2359,7 @@ html.is-black-bg #scroll-indicator-bar,html.is-blue-bg #scroll-indicator-bar {
     border-radius: 5.3125em;
     font-size: clamp(.875rem,1vw,1.75rem);
     background: #fff;
-    font-family: Aeonik;
+    font-family: Playfair Display;
     text-transform: uppercase;
     height: 3.375em;
     width: fit-content;
@@ -4397,7 +4404,7 @@ html.is-black-bg #home-goal {
 }
 
 #project-details-desc a {
-    font-family: Aeonik;
+    font-family: Playfair Display;
     font-weight: 500
 }
 
@@ -4453,7 +4460,7 @@ html.is-black-bg #home-goal {
 }
 
 .project-details-side-list-item {
-    font-family: Aeonik;
+    font-family: Playfair Display;
     color: var(--project-details-text);
     line-height: 1.4
 }
@@ -4478,7 +4485,7 @@ html.is-black-bg #home-goal {
     overflow: hidden;
     background: #fff;
     border-radius: 100px;
-    font-family: Aeonik;
+    font-family: Playfair Display;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--project-details-btn-text);

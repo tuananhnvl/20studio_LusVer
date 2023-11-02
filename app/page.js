@@ -19,6 +19,7 @@ import SpaceShader from './components/SpaceShader'
 import Navbar from './components/Navbar'
 import { BallLusion } from './components/BallLusion'
 import { FBOSceneSim } from './fuild2/FBOSceneSim'
+import ImageDepthHover from './components/ImageDepthHover'
 import EffSimuControls from './fuild2/EffSimuControls'
 import BoxGeomestry from './components/BoxGeomestry'
 import SpaceWelcome from './components/SpaceWelcome'
@@ -57,17 +58,11 @@ const ShaderDisplay = shaderMaterial(
         if(r.r < 0.1 && r.b < 0.1) {
            // r=vec3(0.,0.,0.);
             r /= .5;
-            r.x = 1.;
-            r.y = 1.;
-            r.z = 1.;
+            r = vec3(1.,.7,.9);
         }else{
-            
-            r /= 10.;
+            r /= 5.;
         }
-      
-        gl_FragColor = vec4(  r ,a * .02);
-    
-        
+       gl_FragColor = vec4(  r ,a * .01);
       }
     `
 )
@@ -188,12 +183,10 @@ const FBOScene = ({ props }) => {
         </>
     )
 }
-
 function Loader() {
     const { active, progress, errors, item, loaded, total } = useProgress()
     return <Html center>{progress} % loaded</Html>
 }
-
 export default function Home() {
     console.log('Home load')
     const [ref, boxPhysic, lenis, spaceShader, fixedView, view5, view6] = useRefs(null)
@@ -219,6 +212,31 @@ export default function Home() {
     };
     return (
         <>
+            <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }} performance={{ min: 0.1, max: 0.2 }}>
+                <Stats />
+                {/*   <Perf deepAnalyze={true} /> */}
+                <Suspense fallback={<Loader />}>
+                    <View index={2} track={boxPhysic}>
+                        <BallLusion accent={colorNew} action={true} />
+                        {/*   <PerspectiveCamera makeDefault far={100} fov={36} position={[0, 0, 6]} /> */}
+                    </View>
+                    <View index={1} track={fixedView}>
+                        {/*  <FBOScene multisample samples={1} stencilBuffer={false} format={THREE.RGBAFormat} /> */}
+                        <FBOSceneSim multisample samples={1} stencilBuffer={false} format={THREE.RGBAFormat} />
+                        {/*  <BoxGeomestry position={[0,0,0]}/> */}
+                        {/*     <EffSimuControls/> */}
+                    </View>
+                    <View track={spaceShader}>
+                        {/* <SpaceWelcome/> */}
+                        {/* <SceneFBOParicels/> */}
+                        <ImageDepthHover />
+                       
+                    </View>
+                    {/*  <EffectCP/> */}
+                    {/* <EffectComposerCustom /> */}
+                    <Preload all />
+                </Suspense>
+            </Canvas>
             <main ref={ref} className="main">
                 <Navbar />
                 <div style={{ width: '100vw', height: '100vh', position: 'fixed' }} ref={fixedView}>
@@ -366,7 +384,7 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ width: '100vw', height: '100vh', display: 'block', position: 'relative' }} ref={spaceShader}>
+                            <div style={{ width: '100vw', height: '100vh', display: 'block', position: 'relative' }}>
                             </div>
                             <div id="home-featured" className="section">
                                 <div id="home-featured-title-top">
@@ -432,10 +450,10 @@ export default function Home() {
                                     </a>
                                     <a className="project-item project-type-website" data-id="porsche_dream_machine" data-color-bg="#EFD5D3" data-color-text="#000000" data-color-shadow="0.95">
                                         <div className="project-item-main">
-                                            <div className="project-item-image"></div>
+                                            <div className="project-item-image"  ref={spaceShader}></div>
                                         </div>
                                         <div className="project-item-footer">
-                                            <div className="project-item-line-1">concept • 3D illustration • mograph • video</div>
+                                            <div className="project-item-line-1">condddcept • 3D illustration • mograph • video</div>
                                             <div className="project-item-line-2">
                                                 <div className="project-item-line-2-icon"></div>
                                                 <div className="project-item-line-2-inner">
@@ -446,7 +464,7 @@ export default function Home() {
                                     </a>
                                     <a className="project-item project-type-website" data-id="porsche_dream_machine" data-color-bg="#EFD5D3" data-color-text="#000000" data-color-shadow="0.95">
                                         <div className="project-item-main">
-                                            <div className="project-item-image"></div>
+                                            <div className="project-item-image" ></div>
                                         </div>
                                         <div className="project-item-footer">
                                             <div className="project-item-line-1">concept • 3D illustration • mograph • video</div>
@@ -622,28 +640,6 @@ export default function Home() {
             </main>
             <div >
             </div>
-            <Canvas eventSource={ref} id="canvas" gl={{ antialias: false }} performance={{ min: 0.1, max: 0.2 }}>
-                <Stats />
-                {/*   <Perf deepAnalyze={true} /> */}
-                <Suspense fallback={<Loader />}>
-                    <View index={2} track={boxPhysic}>
-                     {/*    <BallLusion accent={colorNew} action={true} /> */}
-                        {/*   <PerspectiveCamera makeDefault far={100} fov={36} position={[0, 0, 6]} /> */}
-                    </View>
-                    <View index={1} track={fixedView}>
-                        <FBOScene multisample samples={3} stencilBuffer={false} format={THREE.RGBAFormat} />
-                        {/*  <FBOSceneSim   /> */}
-                        {/*  <BoxGeomestry position={[0,0,0]}/> */}
-                        {/*     <EffSimuControls/> */}
-                    </View>
-                    <View track={spaceShader}>
-                        {/*  <SpaceWelcome/> */}
-                    </View>
-                    {/*  <EffectCP/> */}
-                    {/* <EffectComposerCustom /> */}
-                    <Preload all />
-                </Suspense>
-            </Canvas>
         </>
     )
 }

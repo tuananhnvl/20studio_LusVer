@@ -1,14 +1,12 @@
 "use client"
-import {  useEffect,useRef,useMemo } from 'react'
-import { useFrame,extend ,createPortal, useThree  } from '@react-three/fiber'
-
-import {shaderMaterial,useFBO,useTexture,PerspectiveCamera } from '@react-three/drei'
-
-import {Scene} from 'three'
+import { useEffect, useRef, useMemo } from 'react'
+import { useFrame, extend, createPortal, useThree } from '@react-three/fiber'
+import { shaderMaterial, useFBO, PerspectiveCamera } from '@react-three/drei'
+import { Scene } from 'three'
 import EffSimuControls from './EffSimuControls.js'
 
-const WaveShaderMaterial = shaderMaterial(
-  { uTime: 0, uTexture: null,uTextureNoiseDis:null},
+const ShaderOutput = shaderMaterial(
+  { uTime: 0, uTexture: null, uTextureNoiseDis: null },
   `
     varying vec2 vUv;
     void main() {
@@ -27,14 +25,12 @@ const WaveShaderMaterial = shaderMaterial(
 
     float rand(float n){return fract(sin(n) * 43758.5453123);}
 
-  float noise(float p){
-      float fl = floor(p);
-  float fc = fract(p);
-      return mix(rand(fl), rand(fl + 1.0), fc);
-  }
+    float noise(float p){
+        float fl = floor(p);
+    float fc = fract(p);
+        return mix(rand(fl), rand(fl + 1.0), fc);
+    }
 
-
-  
 
     void main() {
       vec3 t = texture2D(uTexture, vUv).rgb;   
@@ -46,97 +42,54 @@ const WaveShaderMaterial = shaderMaterial(
           r=vec3(0.,0.,0.);
       } 
     
-      gl_FragColor = vec4(  r ,a * .1);
- 
+      gl_FragColor = vec4(  r,a * .05);
+
       
     }
   `
 )
-const WaveShaderMaterial22222 = shaderMaterial(
-  { uTime: 0, uTexture: null,uTextureNoiseDis:null},
-  `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  `
-    precision mediump float;
-    uniform float uTime;
-    uniform sampler2D uTexture;
-    uniform sampler2D uTextureNoiseDis;
-    uniform vec3 uColor;
 
-    varying vec2 vUv;
+extend({ ShaderOutput })
 
-    void main() {
-      vec3 t = texture2D(uTexture, vUv).rgb;   
-      gl_FragColor = vec4(t,1.);
-      
-    }
-  `
-)
-extend({ WaveShaderMaterial })
-extend({ WaveShaderMaterial22222 })
-
- 
-
-export const FBOSceneSim = ({ props })  => {
-  const {viewport} = useThree()
+export const FBOSceneSim = ({ props }) => {
+  const { viewport } = useThree()
   const target = useFBO(props)
-  const target1 = useFBO(props)
+
+  console.log('this fbo props', target)
   const cam = useRef()
   const shader = useRef()
-  const shader1 = useRef()
+
+
   const scene = useMemo(() => {
     const scene = new Scene()
     return scene
   }, [])
-  const scene1 = useMemo(() => {
-      const scene1 = new Scene()
-      return scene1
-    }, [])
-  const texture = useTexture('noise-dis1.png')
-    
+
+  useEffect(() => {
+    shader.current.transparent = true
+  }, [shader])
+
+
   useFrame((state) => {
-   
-   
+
     state.gl.setRenderTarget(target)
     state.gl.render(scene, cam.current)
     state.gl.setRenderTarget(null)
 
- 
+    
   })
 
 
-  useEffect(() => { 
-    shader.current.transparent = true
-      
-      
-     
-  },[shader,texture])
-  useFrame(({ clock }) => {  
-    shader.current.uTime = clock.getElapsedTime()
-    shader1.current.uTime = clock.getElapsedTime() 
-  })
-  return (    
+
+  return (
     <>
       <PerspectiveCamera ref={cam} position={[0, 0, 0]} />
- 
-      {createPortal(  <EffSimuControls/>  ,scene)}
-      <group>
-          <mesh>
-              <planeGeometry args={[viewport.width,viewport.height,2,2]} />
-              <waveShaderMaterial ref={shader} uTexture={target.texture} />
-             {/*  <meshBasicMaterial color={'blue'}  wireframe={true}/> */}
-          </mesh>
-          <mesh position={[(viewport.width/2 ) - (viewport.width /5/2) ,(viewport.height/2 ) - (viewport.height /5),0]}>
-              <planeGeometry args={[viewport.width /5, viewport.height/5]}/>
-              <waveShaderMaterial22222 ref={shader1} uTexture={target.texture} />
-          </mesh>
-          
-      </group>
+      {createPortal(<EffSimuControls />, scene)}
+      <mesh>
+        <planeGeometry args={[viewport.width, viewport.height]} />
+        <shaderOutput ref={shader} uTexture={target.texture} />
+        {/*  <meshBasicMaterial color={'blue'}  wireframe={true}/> */}
+      </mesh>
     </>
   )
 }

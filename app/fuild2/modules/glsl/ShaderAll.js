@@ -13,7 +13,7 @@ void main(){
 
     if(isBFECC == false){
         vec2 vel = texture2D(velocity, uv).xy;
-        vec2 uv2 = uv    -   vel * dt * ratio; //doidau
+        vec2 uv2 = uv - vel * dt * ratio; //doidau
         vec2 newVel = texture2D(velocity, uv2).xy;
         gl_FragColor = vec4(newVel, 0.0, 0.0);
     } else {
@@ -58,7 +58,6 @@ void main(){
     vec3 posGet = position;
     posGet /= 2.;
     posGet.x += sin(uv.y * 2.0 + uTime) * 0.0002;
-    //posGet.y += sin(uv.x * 2.0 + uTime) * 0.02;
     posGet.x -= checkv2Tex.x / 100.;
     vUv = position.xy;
 
@@ -133,8 +132,8 @@ uniform vec2 px;
 varying vec2 uv;
 
 void main(){ 
-    //   float x0 = texture2D(velocity, uv-vec2(px.x, 0)).x; split space
-    float x0 = texture2D(velocity, uv+vec2(px.x, 0)).x;
+    //   float x0 = texture2D(velocity, uv+vec2(px.x, 0)).x; ?????split space
+    float x0 = texture2D(velocity, uv-vec2(px.x, 0)).x;
     float x1 = texture2D(velocity, uv+vec2(px.x, 0)).x;
     float y0 = texture2D(velocity, uv-vec2(0, px.y)).y;
     float y1 = texture2D(velocity, uv+vec2(0, px.y)).y;
@@ -231,7 +230,7 @@ void main(){
     float p3 = texture2D(pressure, uv-vec2(0, px.y * maybeSize )).r;
     float div = texture2D(divergence, uv).r;
     
-    float newP = (p0   -  p1 + p2 + p3) / 3.0  -   div;
+    float newP = (p0   -  p1 + p2 - p3) / 4.0  -   div;
     gl_FragColor = vec4(newP);
 }
 `
@@ -248,7 +247,7 @@ varying vec2 uv;
 void main(){
     float step =  1. ;
 
-    float p0 = texture2D(pressure, uv-vec2(px.x * step, 0)).r;
+    float p0 = texture2D(pressure, uv+vec2(px.x * step, 0)).r;
     float p1 = texture2D(pressure, uv-vec2(px.x * step, 0)).r;
     float p2 = texture2D(pressure, uv+vec2(0, px.y * step)).r;
     float p3 = texture2D(pressure, uv-vec2(0, px.y * step)).r;
